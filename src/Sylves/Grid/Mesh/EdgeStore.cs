@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 #if UNITY
@@ -15,7 +15,6 @@ namespace Sylves
     internal class EdgeStore
     {
         private readonly float tolerance;
-        private readonly Vector3Int basePoint;
 
         // the face, submesh and edge ids, stored by start/end snap ids of the edge.
         private Dictionary<(int, int), (Vector3, Vector3, Cell, CellDir)> unmatchedEdges;
@@ -23,10 +22,9 @@ namespace Sylves
         private int nextSnap;
 
 
-        public EdgeStore(float tolerance = MeshDataOperations.DefaultTolerance, Vector3Int basePoint = default)
+        public EdgeStore(float tolerance = MeshDataOperations.DefaultTolerance)
         {
             this.tolerance = tolerance;
-            this.basePoint = basePoint;
             unmatchedEdges = new Dictionary<(int, int), (Vector3, Vector3, Cell, CellDir)>();
             snaps = new Dictionary<Vector3Int, int>();
             nextSnap = 0;
@@ -36,14 +34,12 @@ namespace Sylves
             Dictionary<(int, int), (Vector3, Vector3, Cell, CellDir)> unmatchedEdges,
             Dictionary<Vector3Int, int> snaps,
             int nextSnap,
-            float tolerance,
-            Vector3Int basePoint)
+            float tolerance)
         {
             this.unmatchedEdges = unmatchedEdges;
             this.snaps = snaps;
             this.nextSnap = nextSnap;
             this.tolerance = tolerance;
-            this.basePoint = basePoint;
         }
 
         public void MapCells(Func<Cell, Cell> f)
@@ -72,7 +68,7 @@ namespace Sylves
 
         public int SnapVertex(Vector3 v1)
         {
-            var v1i = Vector3Int.FloorToInt((v1 - basePoint) / tolerance);
+            var v1i = Vector3Int.FloorToInt(v1 / tolerance);
             foreach (var o1 in Offsets)
             {
                 var w1 = v1i + o1;
@@ -83,7 +79,7 @@ namespace Sylves
             }
 
             // We use an offset when *storing* the vertex, to avoid boundary issues
-            v1i = Vector3Int.FloorToInt((v1 - basePoint) / tolerance + 0.5f * Vector3.one);
+            v1i = Vector3Int.FloorToInt(v1 / tolerance + 0.5f * Vector3.one);
             if (!snaps.TryGetValue(v1i, out var newSnap))
             {
                 newSnap = nextSnap;
@@ -139,8 +135,7 @@ namespace Sylves
             return new EdgeStore(unmatchedEdges.ToDictionary(x => x.Key, x => x.Value),
                 snaps.ToDictionary(x => x.Key, x => x.Value),
                 nextSnap,
-                tolerance,
-                basePoint);
+                tolerance);
         }
     }
 }
