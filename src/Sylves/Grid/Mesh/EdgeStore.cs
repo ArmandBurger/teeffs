@@ -15,6 +15,7 @@ namespace Sylves
     internal class EdgeStore
     {
         private readonly float tolerance;
+        private readonly bool isPlanar;
 
         // the face, submesh and edge ids, stored by start/end snap ids of the edge.
         private Dictionary<(int, int), (Vector3, Vector3, Cell, CellDir)> unmatchedEdges;
@@ -22,9 +23,10 @@ namespace Sylves
         private int nextSnap;
 
 
-        public EdgeStore(float tolerance = MeshDataOperations.DefaultTolerance)
+        public EdgeStore(float tolerance = MeshDataOperations.DefaultTolerance, bool isPlanar = false)
         {
             this.tolerance = tolerance;
+            this.isPlanar = isPlanar;
             unmatchedEdges = new Dictionary<(int, int), (Vector3, Vector3, Cell, CellDir)>();
             snaps = new Dictionary<Vector3Int, int>();
             nextSnap = 0;
@@ -34,12 +36,14 @@ namespace Sylves
             Dictionary<(int, int), (Vector3, Vector3, Cell, CellDir)> unmatchedEdges,
             Dictionary<Vector3Int, int> snaps,
             int nextSnap,
-            float tolerance)
+            float tolerance,
+            bool isPlanar)
         {
             this.unmatchedEdges = unmatchedEdges;
             this.snaps = snaps;
             this.nextSnap = nextSnap;
             this.tolerance = tolerance;
+            this.isPlanar = isPlanar;
         }
 
         public void MapCells(Func<Cell, Cell> f)
@@ -66,10 +70,21 @@ namespace Sylves
             new Vector3Int(1, 1, 1),
         };
 
+        private static readonly Vector3Int[] OffsetsPlanar = {
+            new Vector3Int(0, 0, 0),
+            new Vector3Int(0, 1, 0),
+            new Vector3Int(1, 0, 0),
+            new Vector3Int(1, 1, 0),
+        };
+
+        private static readonly Vector3 WriteOffset = new Vector3(0.5f, 0.5f, 0.5f);
+        private static readonly Vector3 WriteOffsetPlanar = new Vector3(0.5f, 0.5f, 0.0f);
+
         public int SnapVertex(Vector3 v1)
         {
             var v1i = Vector3Int.FloorToInt(v1 / tolerance);
-            foreach (var o1 in Offsets)
+            var offsets = isPlanar ? OffsetsPlanar : Offsets;
+            foreach (var o1 in offsets)
             {
                 var w1 = v1i + o1;
                 if (snaps.TryGetValue(w1, out var snap))
@@ -79,7 +94,7 @@ namespace Sylves
             }
 
             // We use an offset when *storing* the vertex, to avoid boundary issues
-            v1i = Vector3Int.FloorToInt(v1 / tolerance + 0.5f * Vector3.one);
+            v1i = Vector3Int.FloorToInt(v1 / tolerance + (isPlanar ? WriteOffsetPlanar : WriteOffset));
             if (!snaps.TryGetValue(v1i, out var newSnap))
             {
                 newSnap = nextSnap;
@@ -135,7 +150,8 @@ namespace Sylves
             return new EdgeStore(unmatchedEdges.ToDictionary(x => x.Key, x => x.Value),
                 snaps.ToDictionary(x => x.Key, x => x.Value),
                 nextSnap,
-                tolerance);
+                tolerance,
+                isPlanar);
         }
     }
 }

@@ -153,7 +153,7 @@ namespace Sylves
 
             // TODO: Check bounds are within the chunk
 
-            var dataDrivenData = MeshGridBuilder.Build(meshData, meshGridOptions, out var edgeStore);
+            var dataDrivenData = MeshGridBuilder.Build(meshData, meshGridOptions, true, out var edgeStore);
 
             Cell Map(Cell childCell) => Combine(childCell, chunkCell);
 

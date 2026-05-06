@@ -18,17 +18,18 @@ namespace Sylves
         #region 2d
         public static DataDrivenData Build(MeshData meshData, MeshGridOptions meshGridOptions)
         {
-            return Build(meshData, meshGridOptions, out var _);
+            // TODO: Detect planar meshes here?
+            return Build(meshData, meshGridOptions, false, out var _);
         }
 
-        public static DataDrivenData Build(MeshData meshData, MeshGridOptions meshGridOptions, out EdgeStore edgeStore)
+        public static DataDrivenData Build(MeshData meshData, MeshGridOptions meshGridOptions, bool isPlanar, out EdgeStore edgeStore)
         {
             var data = new DataDrivenData
             {
                 Cells = new Dictionary<Cell, DataDrivenCellData>(),
                 Moves = new Dictionary<(Cell, CellDir), (Cell, CellDir, Connection)>(),
             };
-            edgeStore = BuildMoves(meshData, meshGridOptions, data.Moves);
+            edgeStore = BuildMoves(meshData, meshGridOptions, isPlanar, data.Moves);
             BuildCellData(meshData, meshGridOptions, data.Cells);
             return data;
         }
@@ -88,10 +89,10 @@ namespace Sylves
         // Loop over every edge of every face, match them up pairwise, and marshal into moves array
         // This relies on the fact that for 2d cell types, the number of the edge corresponds to the CellDir.
         // Returns any unmatched edges
-        private static EdgeStore BuildMoves(MeshData data, MeshGridOptions meshGridOptions, IDictionary<(Cell, CellDir), (Cell, CellDir, Connection)> moves)
+        private static EdgeStore BuildMoves(MeshData data, MeshGridOptions meshGridOptions, bool isPlanar, IDictionary<(Cell, CellDir), (Cell, CellDir, Connection)> moves)
         {
             var vertices = data.vertices;
-            var edgeStore = new EdgeStore(meshGridOptions.Tolerance);
+            var edgeStore = new EdgeStore(meshGridOptions.Tolerance, isPlanar);
             var vertexSnaps = new int[vertices.Length];
             for (var i = 0; i < vertices.Length; i++)
             {
@@ -152,7 +153,7 @@ namespace Sylves
             var layerCellData = new Dictionary<Cell, DataDrivenCellData>();
             var layerMoves = new Dictionary<(Cell, CellDir), (Cell, CellDir, Connection)>();
             BuildCellData(meshData, meshPrismGridOptions, layerCellData);
-            BuildMoves(meshData, meshPrismGridOptions, layerMoves);
+            BuildMoves(meshData, meshPrismGridOptions, false, layerMoves);
 
             // Then repeat it on every level
             BuildCellData(meshData, meshPrismGridOptions, layerCellData, data.Cells);
