@@ -137,7 +137,7 @@ This can convert 2d grids into 3d ones, usually with the z-cordinate being the "
 </tr>
 <tr>
     <td><a href="../../images/grids/voronoi_sphere.png"><img class="grid-thumb" src="../../images/grids/voronoi_sphere.png" /></img></td>
-    <td><a href="xref:Sylves.VoronoiSphereGrid">VoronoiSphereGrid</a><br/>An spherical version of a voronoi grid, where points are on the surface of the unit sphere.</td>
+    <td><a href="xref:Sylves.VoronoiSphereGrid">VoronoiSphereGrid</a><br/>A spherical version of a voronoi grid, where points are on the surface of the unit sphere.</td>
 </tr>
 </table>
 
