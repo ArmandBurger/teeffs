@@ -6,3 +6,7 @@ src/Sylves.Godot/**/*.cs
 src/Sylves.BigInt/**/*.cs
 /release
 .DS_Store
+
+target
+Cargo.lock
+**/*.rs.bk

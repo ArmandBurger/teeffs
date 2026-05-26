@@ -1,0 +1,16 @@
+[package]
+name                  = "teeffs"
+version.workspace     = true
+edition.workspace     = true
+license.workspace     = true
+authors.workspace     = true
+description.workspace = true
+
+[dependencies]
+teeffs-core    = { path = "../crates/teeffs-core",    version = "0.1.0" }
+teeffs-grid    = { path = "../crates/teeffs-grid",    version = "0.1.0" }
+teeffs-mesh    = { path = "../crates/teeffs-mesh",    version = "0.1.0" }
+teeffs-algo    = { path = "../crates/teeffs-algo",    version = "0.1.0" }
+teeffs-deform  = { path = "../crates/teeffs-deform",  version = "0.1.0" }
+teeffs-voronoi = { path = "../crates/teeffs-voronoi", version = "0.1.0" }
+teeffs-export  = { path = "../crates/teeffs-export",  version = "0.1.0" }

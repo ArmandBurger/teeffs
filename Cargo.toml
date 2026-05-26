@@ -1,0 +1,10 @@
+[workspace]
+resolver = "3"
+members = ["teeffs", "crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+authors = ["Armand Burger", "BorisTheBrave"]
+description = "A Rust library for 2D and 3D grids, ported from the C# Sylves library by BorisTheBrave."
