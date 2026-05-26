@@ -8,3 +8,4 @@ description.workspace = true
 
 [dependencies]
 teeffs-core = { path = "../teeffs-core", version = "0.1.0" }
+thiserror.workspace = true

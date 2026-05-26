@@ -8,3 +8,6 @@ edition = "2024"
 license = "MIT"
 authors = ["Armand Burger", "BorisTheBrave"]
 description = "A Rust library for 2D and 3D grids, ported from the C# Sylves library by BorisTheBrave."
+
+[workspace.dependencies]
+thiserror = "=2.0.18"
